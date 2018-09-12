@@ -4,7 +4,7 @@ const path = require('path'),
 
 module.exports = {
     entry: {
-        app: ['./src/app/App.tsx', 'webpack-hot-middleware/client'],
+        app: ['./src/app/index.tsx', 'webpack-hot-middleware/client'],
         vendor: ['react', 'react-dom']
     },
     output: {
@@ -21,11 +21,39 @@ module.exports = {
                 test: /\.(ts|tsx)$/,
                 loader: 'ts-loader'
             },
-            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+            {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader'
+                    },
+                ]
+            },
+            {
+                test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'url?limit=10000&mimetype=application/font-woff'
+              },
+              {
+                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'url?limit=10000&mimetype=application/octet-stream'
+              },
+              {
+                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'file'
+              },
+              {
+                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'url?limit=10000&mimetype=image/svg+xml'
+              }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'src', 'app', 'index.html') }),
         new webpack.HotModuleReplacementPlugin()
-    ]
+    ],
+    mode: 'development'
 }

@@ -1,24 +1,24 @@
+import * as React from 'react';
 import { connectedRouterRedirect } from "redux-auth-wrapper/history4/redirect";
 import locationHelperBuilder from "redux-auth-wrapper/history4/locationHelper";
 import connectedAuthWrapper from "redux-auth-wrapper/connectedAuthWrapper";
 
 import store from "./store";
-import { loginAction } from "./modules/user/actions";
+import { loginSuccess } from "./modules/user/actions";
 
 const locationHelper = locationHelperBuilder({});
 
 const userIsAuthenticatedDefaults = {
-    //authenticatedSelector: state => localStorage.getItem('userData') !== null,
-    authenticatedSelector: state => {
+    authenticatedSelector: (state: any) => {
         const hasUserState = state.user.data !== null;
-        let userData = localStorage.getItem("userData");
+        let userDataRaw: string|null = localStorage.getItem("userData");
 
-        if (!hasUserState && userData !== null) {
-            userData = JSON.parse(userData);
+        if (!hasUserState && userDataRaw !== null) {
+            const userData = JSON.parse(userDataRaw);
             const { email, firstName, lastName } = userData;
 
             store.dispatch(
-                loginAction({
+                loginSuccess({
                     email,
                     firstName,
                     lastName
