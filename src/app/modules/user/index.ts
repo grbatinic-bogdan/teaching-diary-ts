@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { reset } from 'redux-form';
-import { combineReducers } from 'redux';
+import { combineReducers, Reducer } from 'redux';
 
 import api from '../../services/api';
 import { bodyInterface } from '../../services/api'
@@ -84,7 +84,7 @@ export const register = (payload: bodyInterface) => {
     }
 }
 
-const registerReducer = handleActions({
+const registerReducer: Reducer = handleActions({
     [registerSuccess.toString()]() {
         return {
             hasRegistered: true
@@ -94,7 +94,7 @@ const registerReducer = handleActions({
     hasRegistered: false
 });
 
-export const userReducer = handleActions({
+export const userReducer: Reducer = handleActions({
     [loginSuccess.toString()](state, {payload: { email, firstName, lastName } }) {
         return {
             email,
@@ -106,6 +106,21 @@ export const userReducer = handleActions({
         return null
     }
 }, null);
+
+interface IDataReducer {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+};
+
+interface IRegisterReducer {
+    hasRegistered: boolean;
+}
+
+export interface IUserReducer {
+    data: IDataReducer,
+    register: IRegisterReducer
+}
 
 export const reducer = combineReducers({
     data: userReducer,

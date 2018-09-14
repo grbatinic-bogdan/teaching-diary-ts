@@ -1,9 +1,11 @@
-import { combineReducers } from "redux";
-import { reducer as form } from "redux-form";
+import { combineReducers, ReducersMapObject } from "redux";
+import { reducer as form, FormReducer } from "redux-form";
 
 import { reducer as user } from "../modules/user";
 
-export default combineReducers({
+const reducer: ReducersMapObject = {
     user,
-    form,    
-});
+    form
+};
+
+export default combineReducers(reducer);

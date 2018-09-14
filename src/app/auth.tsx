@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { connectedRouterRedirect } from "redux-auth-wrapper/history4/redirect";
 import locationHelperBuilder from "redux-auth-wrapper/history4/locationHelper";
-import connectedAuthWrapper from "redux-auth-wrapper/connectedAuthWrapper";
+import connectedAuthWrapper, { ConnectedAuthWrapperConfig } from "redux-auth-wrapper/connectedAuthWrapper";
 
 import store from "./store";
 import { loginSuccess } from "./modules/user/actions";
+import authWrapper, { InjectedAuthProps, AuthWrapperConfig } from 'redux-auth-wrapper/authWrapper';
+import { INavigationProps } from './components/Navigation';
+import { ReducersMapObject } from 'redux';
 
 const locationHelper = locationHelperBuilder({});
 
@@ -48,9 +51,11 @@ export const userIsNotAuthenticated = connectedRouterRedirect({
     authenticatedSelector: state => localStorage.getItem("userData") === null,
     wrapperDisplayName: "UserIsNotAuthenticated"
 });
-
-export const visibleAuthenticated = connectedAuthWrapper({
-    authenticatedSelector: state => localStorage.getItem("userData") !== null,
+const config = {
+    authenticatedSelector: () => localStorage.getItem("userData") !== null,
     wrapperDisplayName: "AuthenticatedOrEmpty",
-    FailureComponent: () => <div />
-});
+    FailureComponent: () => <div />,
+}
+// TODO: which type is supposed to be here?
+export const visibleAuthenticated = connectedAuthWrapper<any>(config);
+
