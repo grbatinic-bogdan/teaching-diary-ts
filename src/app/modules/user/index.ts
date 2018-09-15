@@ -1,24 +1,17 @@
-import { handleActions } from 'redux-actions';
 import { reset } from 'redux-form';
-import { combineReducers, Reducer } from 'redux';
+import { combineReducers } from 'redux';
+import { ActionType, getType } from 'typesafe-actions';
 
 import api from '../../services/api';
-import { bodyInterface } from '../../services/api'
-import {
-    loginStart,
-    loginSuccess,
-    loginFailure,
+import { bodyInterface } from '../../services/api';
+import * as userActions from './actions';
+import { IRegisterReducer, IUser } from './interfaces';
 
-    registerStart,
-    registerSuccess,
-    registerFailure,
-
-    logoutAction,
-} from './actions';
+type UserActions = ActionType<typeof userActions>;
 
 export const login = (email: string, password: string) => {
     return (dispatch: Function) => {
-        dispatch(loginStart());
+        dispatch(userActions.loginStart());
 
         api(
             'login',
@@ -42,11 +35,15 @@ export const login = (email: string, password: string) => {
                 }
                 localStorage.setItem('userData', JSON.stringify(userData));
 
-                dispatch(loginSuccess(data));
+                dispatch(
+                    userActions.loginSuccess(data)
+                );
             }
         })
         .catch((error) => {
-            dispatch(loginFailure(error));
+            dispatch(
+                userActions.loginFailure(error.toString())
+            );
         })
     }
 }
@@ -54,13 +51,13 @@ export const login = (email: string, password: string) => {
 export const logout = () => {
     return (dispatch: Function) => {
         localStorage.removeItem('userData');
-        dispatch(logoutAction());
+        dispatch(userActions.logout());
     }
 }
 
 export const register = (payload: bodyInterface) => {
     return (dispatch: Function) => {
-        dispatch(registerStart());
+        dispatch(userActions.registerStart());
 
         api(
             'users',
@@ -75,54 +72,60 @@ export const register = (payload: bodyInterface) => {
             return data;
         })
         .then((data) => {
-            dispatch(registerSuccess(data));
+            dispatch(
+                userActions.registerSuccess(data)
+            );
             dispatch(reset('register'));
         })
         .catch(() => {
-            dispatch(registerFailure());
+            dispatch(
+                userActions.registerFailure('Failed to register')
+            );
         })
     }
 }
 
-const registerReducer: Reducer = handleActions({
-    [registerSuccess.toString()]() {
-        return {
-            hasRegistered: true
-        };
-    },
-}, {
-    hasRegistered: false
-});
 
-export const userReducer: Reducer = handleActions({
-    [loginSuccess.toString()](state, {payload: { email, firstName, lastName } }) {
-        return {
-            email,
-            firstName,
-            lastName
-        }
-    },
-    [logoutAction.toString()]() {
-        return null
+const registerReducerDefaultState: IRegisterReducer = { hasRegistered: false };
+const registerReducer = (state: IRegisterReducer = registerReducerDefaultState, action: UserActions) => {
+    switch (action.type) {
+        case getType(userActions.registerSuccess):
+            return {
+                hasRegistered: true
+            };
+        default:
+            return registerReducerDefaultState;
     }
-}, null);
-
-interface IDataReducer {
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-};
-
-interface IRegisterReducer {
-    hasRegistered: boolean;
 }
 
-export interface IUserReducer {
-    data: IDataReducer,
+const dataReducer = (state: IUser | null, action: UserActions) => {
+    switch (action.type) {
+        case getType(userActions.loginSuccess):
+            const {
+                email,
+                firstName,
+                lastName
+            } = action.payload;
+
+            return {
+                ...state,
+                email,
+                firstName,
+                lastName
+            };
+        case getType(userActions.logout):
+            return null;
+        default:
+            return null;
+    }
+}
+
+interface UserState {
+    data: IUser;
     register: IRegisterReducer
 }
 
-export const reducer = combineReducers({
-    data: userReducer,
+export const reducer = combineReducers<UserState>({
+    data: dataReducer,
     register: registerReducer
-})
+});
