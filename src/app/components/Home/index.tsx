@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { InjectedAuthRouterProps } from 'redux-auth-wrapper/history3/redirect';
+import { Link } from 'react-router-dom';
+import TimeEntryList from '../TimeEntryList';
 
-const Home = () => {
+const Home: React.SFC<InjectedAuthRouterProps> = () => {
     return (
         <div>
-            <h1>You're home now</h1>
+            <Link to="/new-time-entry">Add new time entry</Link>
+            <TimeEntryList />
         </div>
     )
 }

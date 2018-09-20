@@ -1,11 +1,13 @@
-import { combineReducers, Reducer, ReducersMapObject } from "redux";
-import { reducer as form, FormReducer } from "redux-form";
+import { combineReducers } from "redux";
+import { reducer as form } from "redux-form";
 
 import { reducer as user } from "../modules/user";
+import { timeEntriesReducer as timeEntries } from '../modules/time-entry';
 
 const reducer = {
     user,
-    form
+    form,
+    timeEntries
 };
 
 export default combineReducers(reducer);

@@ -26,7 +26,7 @@ class LoginPage extends React.Component<LoginPropsInterface, {}> {
 
         return (
             <div>
-                <ReduxedForm onSubmit={this.onSubmit.bind(this)} />
+                <ReduxedForm onSubmit={this.onSubmit} />
                 <p>Don't have an account? You can <Link to="/register">register</Link> here</p>
             </div>
 
@@ -34,7 +34,7 @@ class LoginPage extends React.Component<LoginPropsInterface, {}> {
 
     }
 
-    onSubmit(values: any) {
+    onSubmit = (values: any) => {
         const {
             email,
             password

@@ -1,5 +1,5 @@
 import { reset } from 'redux-form';
-import { combineReducers } from 'redux';
+import { combineReducers, Dispatch } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
 import api from '../../services/api';
@@ -10,7 +10,7 @@ import { IRegisterReducer, IUser } from './interfaces';
 type UserActions = ActionType<typeof userActions>;
 
 export const login = (email: string, password: string) => {
-    return (dispatch: Function) => {
+    return (dispatch: Dispatch) => {
         dispatch(userActions.loginStart());
 
         api(
